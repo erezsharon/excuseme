@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.wav
+*.mp3
+*.m4a
+neuralfm_*/
+.DS_Store

@@ -1,0 +1,9 @@
+customtkinter
+sounddevice
+numpy
+scipy
+pydub
+yt-dlp
+librosa
+# Optional: enables drag-and-drop of local audio files onto the window.
+# tkinterdnd2
