@@ -68,8 +68,8 @@ class NeuralFMApp:
         self.timer.on_phase_change = self._on_phase_change
 
         root.title("NeuralFM")
-        root.geometry("760x760")
-        root.minsize(680, 720)
+        root.geometry("780x820")
+        root.minsize(660, 560)
         root.configure(fg_color=BG)
 
         self._build_ui()
@@ -95,6 +95,34 @@ class NeuralFMApp:
             font=ctk.CTkFont(size=13),
             text_color=MUTED,
         ).pack(pady=(0, 10))
+
+        # Transport + status are pinned to the bottom so the most important
+        # controls stay visible no matter how tall the content above grows.
+        status_bar = ctk.CTkFrame(self.root, fg_color="transparent")
+        status_bar.pack(side="bottom", fill="x", pady=(0, 10))
+        self.status = ctk.CTkLabel(
+            status_bar, text="No track loaded.", text_color=MUTED,
+            font=ctk.CTkFont(size=12),
+        )
+        self.status.pack(pady=(2, 0))
+
+        transport = ctk.CTkFrame(self.root, fg_color="transparent")
+        transport.pack(side="bottom", fill="x", padx=20, pady=(6, 2))
+        self.play_btn = ctk.CTkButton(
+            transport, text="▶  Play", command=self._toggle_play,
+            height=46, font=ctk.CTkFont(size=15, weight="bold"),
+            fg_color=ACCENT, hover_color=ACCENT_DIM,
+        )
+        self.play_btn.pack(side="left", expand=True, fill="x", padx=4)
+        ctk.CTkButton(
+            transport, text="■  Stop", command=self._stop, height=46,
+            fg_color=ACCENT_DIM, hover_color=ACCENT,
+            font=ctk.CTkFont(size=15, weight="bold"),
+        ).pack(side="left", expand=True, fill="x", padx=4)
+
+        # Everything else lives in a scrollable area between header and transport.
+        self.content = ctk.CTkScrollableFrame(self.root, fg_color="transparent")
+        self.content.pack(fill="both", expand=True, padx=4)
 
         # ---- Mode selector ---------------------------------------------
         mode_card = self._card()
@@ -257,30 +285,9 @@ class NeuralFMApp:
             self.file_drop.drop_target_register(DND_FILES)
             self.file_drop.dnd_bind("<<Drop>>", self._on_drop)
 
-        # ---- Transport + status ----------------------------------------
-        transport = ctk.CTkFrame(self.root, fg_color="transparent")
-        transport.pack(fill="x", padx=20, pady=(4, 4))
-        self.play_btn = ctk.CTkButton(
-            transport, text="▶  Play", command=self._toggle_play,
-            height=46, font=ctk.CTkFont(size=15, weight="bold"),
-            fg_color=ACCENT, hover_color=ACCENT_DIM,
-        )
-        self.play_btn.pack(side="left", expand=True, fill="x", padx=4)
-        ctk.CTkButton(
-            transport, text="■  Stop", command=self._stop, height=46,
-            fg_color=ACCENT_DIM, hover_color=ACCENT,
-            font=ctk.CTkFont(size=15, weight="bold"),
-        ).pack(side="left", expand=True, fill="x", padx=4)
-
-        self.status = ctk.CTkLabel(
-            self.root, text="No track loaded.", text_color=MUTED,
-            font=ctk.CTkFont(size=12),
-        )
-        self.status.pack(pady=(4, 12))
-
     def _card(self) -> ctk.CTkFrame:
-        c = ctk.CTkFrame(self.root, fg_color=CARD, corner_radius=12)
-        c.pack(fill="x", padx=20, pady=6)
+        c = ctk.CTkFrame(self.content, fg_color=CARD, corner_radius=12)
+        c.pack(fill="x", padx=16, pady=6)
         return c
 
     # -------------------------------------------------------------- modes
